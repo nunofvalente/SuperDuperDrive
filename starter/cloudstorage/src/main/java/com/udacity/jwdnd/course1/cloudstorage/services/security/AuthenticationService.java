@@ -1,7 +1,8 @@
-package com.udacity.jwdnd.course1.cloudstorage.services;
+package com.udacity.jwdnd.course1.cloudstorage.services.security;
 
 import com.udacity.jwdnd.course1.cloudstorage.data.mappers.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.data.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.services.security.HashService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +38,8 @@ public class AuthenticationService implements AuthenticationProvider {
         }
         return null;
     }
+
+
 
     @Override
     public boolean supports(Class<?> aClass) {
