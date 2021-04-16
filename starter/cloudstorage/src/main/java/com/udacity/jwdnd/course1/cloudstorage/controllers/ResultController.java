@@ -6,13 +6,9 @@ import com.udacity.jwdnd.course1.cloudstorage.services.business.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("home/result")
 public class ResultController {
 
     private final  NoteService noteService;
@@ -23,12 +19,30 @@ public class ResultController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public String getResultPage(Authentication authentication, @ModelAttribute Note note, Model model) {
-        return "redirect:/login";
+    @GetMapping("/home/result")
+    public String showResult(@RequestParam("entity") String entity, @RequestParam("id") int id, Model model) {
+        switch(entity) {
+            case "note":
+                model.addAttribute("error", false);
+                if (noteService.getNoteById(id) != null) {
+                    model.addAttribute("success", false);
+                    System.out.print("Inside condition");
+                    return "result";
+                }
+                model.addAttribute("success", true);
+                break;
+            case "file":
+
+                break;
+            case "credential":
+
+                break;
+        }
+
+        return "result";
     }
 
-    @PostMapping
+    @PostMapping("/home/result")
     public String handleState(Authentication authentication, @ModelAttribute Note note, Model model) {
         int userId = userService.getLoggedUserId(authentication);
         note.setUserId(userId);

@@ -82,7 +82,7 @@
                                                     [[${note.getNoteId()}]],
                                                     [[${note.getNoteTitle()}]],
                                                     [[${note.getNoteDescription()}]])">Edit</button>
-                                            <button class="btn btn-danger" type="button" >Delete</button>
+                                            <a  class="btn btn-danger" th:href="@{/home/deleteNote/{noteId}(noteId=${note.noteId})}">Delete</a>
                                         </td>
                                         <th scope="row" th:text="${note.noteTitle}">Example Note Title</th>
                                         <td th:text="${note.noteDescription}">Example Note Description </td>

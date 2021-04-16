@@ -18,6 +18,6 @@ public interface NoteMapper {
     @Select("SELECT * FROM NOTES WHERE noteId = #{noteId}")
     Note getNoteById(int noteId);
 
-    @Delete("DELETE * FROM NOTES WHERE noteId = #{noteId}")
+    @Delete("DELETE FROM NOTES WHERE noteId = #{noteId}")
     void deleteNote(int noteId);
 }
