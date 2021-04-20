@@ -61,11 +61,29 @@ public class NoteService {
         return null;
     }
 
+    /**
+     * Deletes a note with a specific noteId
+     *
+     * @param noteId The id of the note to delete
+     */
     public void deleteNote(int noteId) {
         try {
             noteMapper.deleteNote(noteId);
         } catch (PersistenceException e) {
             System.out.println("Error retrieving note with id: " + noteId + ". Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes a note with a specific noteId
+     *
+     * @param note Note we want to update
+     */
+    public void updateNote(Note note) {
+        try {
+            noteMapper.updateNote(note);
+        } catch (PersistenceException e) {
+            System.out.println("Error updating note with id: " + note.getNoteId() + ". Error: " + e.getMessage());
         }
     }
 }

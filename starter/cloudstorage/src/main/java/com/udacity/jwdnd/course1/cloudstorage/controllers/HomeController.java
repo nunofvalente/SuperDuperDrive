@@ -28,6 +28,7 @@ public class HomeController {
     public String getHomePage(Authentication authentication, Model model) {
         int userId = userService.getLoggedUserId(authentication);
         model.addAttribute("notesList", noteService.getNotesByUser(userId));
+        model.addAttribute("credentialList", credentialService.getCredentialsByUser(userId));
         return "home";
     }
 
