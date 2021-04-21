@@ -1,12 +1,13 @@
 package com.udacity.jwdnd.course1.cloudstorage.services.business;
 
 import com.udacity.jwdnd.course1.cloudstorage.data.mappers.CredentialMapper;
-import com.udacity.jwdnd.course1.cloudstorage.data.mappers.NoteMapper;
 import com.udacity.jwdnd.course1.cloudstorage.data.model.Credential;
-import com.udacity.jwdnd.course1.cloudstorage.data.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.services.security.EncryptionService;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,9 +15,11 @@ import java.util.List;
 public class CredentialService {
 
     private final CredentialMapper credentialMapper;
+    private final EncryptionService encryptionService;
 
-    public CredentialService(CredentialMapper credentialMapper) {
+    public CredentialService(CredentialMapper credentialMapper, EncryptionService encryptionService) {
         this.credentialMapper = credentialMapper;
+        this.encryptionService = encryptionService;
     }
 
     /**
@@ -27,6 +30,10 @@ public class CredentialService {
      */
     public int insertCredential(Credential credential) {
         try {
+            String encodedKey = getEncodedKey();
+            credential.setKey(encodedKey);
+            String encodedPassword = encryptionService.encryptValue(credential.getPassword(), credential.getKey());
+            credential.setPassword(encodedPassword);
             return credentialMapper.insertCredentials(credential);
         } catch (PersistenceException e) {
             System.out.println("Error inserting credential: " + e.getMessage());
@@ -84,9 +91,18 @@ public class CredentialService {
      */
     public void updateCredential(Credential credential) {
         try {
+            String encodedPassword = encryptionService.encryptValue(credential.getPassword(), credential.getKey());
+            credential.setPassword(encodedPassword);
             credentialMapper.updateCredential(credential);
         } catch (PersistenceException e) {
             System.out.println("Error updating credential with id: " + credential.getCredentialId() + ". Error: " + e.getMessage());
         }
+    }
+
+    private String getEncodedKey() {
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        return Base64.getEncoder().encodeToString(key);
     }
 }

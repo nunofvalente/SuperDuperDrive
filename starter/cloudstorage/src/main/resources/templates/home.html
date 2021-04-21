@@ -25,14 +25,14 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form action="#" enctype="multipart/form-data" method="POST">
+                        <form action="#" enctype="multipart/form-data" method="POST" th:object=${fileDTO} th:action="@{/home/result/uploadFile}">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
                                         <label for="fileUpload">Upload a New File:</label>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="file" class="form-control-file" id="fileUpload" name="fileUpload">
+                                        <input type="file" th:field="*{file}" class="form-control-file" id="fileUpload" name="fileUpload">
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="submit" class="btn btn-dark">Upload</button>
@@ -49,12 +49,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="file: ${fileList}">
                                     <td>
-                                        <a target="_blank" class="btn btn-success">View</a>
-                                        <a  class="btn btn-danger">Delete</a>
+                                        <a target="_blank" class="btn btn-success" th:href="@{'/home/downloadFile/' + ${file.fileId}}">View</a>
+                                        <a class="btn btn-danger" th:href="@{/home/deleteFile/{fileId}(fileId=${file.fileId})}">Delete</a>
                                     </td>
-                                    <th scope="row">ExampleFile.txt</th>
+                                    <th scope="row" th:text="${file.getFileName()}">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
@@ -145,8 +145,9 @@
                                                     [[${credential.getCredentialId()}]],
                                                     [[${credential.getUrl()}]],
                                                     [[${credential.getUsername()}]],
-                                                    [[${credential.getPassword()}]])">Edit</button>
-                                        <a class="btn btn-danger" th:href="@{/home/deleteCredential/(credentialId = ${credential.getCredentialId()})}">Delete</a>
+                                                    [[${credential.getKey()}]],
+                                                    [[${credential.getDecryptedPassword()}]])">Edit</button>
+                                        <a class="btn btn-danger" th:href="@{/home/deleteCredential/{credentialId}(credentialId=${credential.credentialId})}">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.getUrl()}">Example Credential URL</th>
                                     <td th:text="${credential.getUsername()}">Example Credential Username</td>
@@ -168,6 +169,7 @@
                                     <div class="modal-body">
                                         <form action="#" method="POST" th:object="${credential}" th:action="@{/home/result?entity=credential}">
                                             <input type="hidden" name="credentialId" id="credential-id">
+                                            <input type="hidden" name="key" id="credential-key">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">URL</label>
                                                 <input type="text" name= "url" class="form-control" id="credential-url" maxlength="100" required>
@@ -210,10 +212,11 @@
             }
 
             // For opening the credentials modal
-            function showCredentialModal(credentialId, url, username, password) {
+            function showCredentialModal(credentialId, url, username, key, password) {
                 $('#credential-id').val(credentialId ? credentialId : '');
                 $('#credential-url').val(url ? url : '');
                 $('#credential-username').val(username ? username : '');
+                $('#credential-key').val(key ? key : '');
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
             }
