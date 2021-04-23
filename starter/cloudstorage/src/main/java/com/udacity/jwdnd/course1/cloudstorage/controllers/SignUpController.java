@@ -32,10 +32,12 @@ public class SignUpController {
         if(!userService.isUsernameTaken(user.getUsername())) {
             model.addAttribute("success", true);
             userService.createUser(user);
+            return "redirect:/login?success";
         } else {
             model.addAttribute("error", true);
             model.addAttribute("errorMessage", errorMessage);
+            return "signup";
         }
-        return "signup";
+
     }
 }

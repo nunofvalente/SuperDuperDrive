@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -67,12 +68,13 @@ public class ResultController {
         return "result";
     }
 
+    @ExceptionHandler(MultipartException.class)
     @PostMapping("/home/result/uploadFile")
     public String uploadFile(Authentication authentication, @ModelAttribute("file") MultipartFile file, Model model) {
         int userId = userService.getLoggedUserId(authentication);
 
-        if(file.isEmpty()) {
-            String errorMsg = "No file to upload, please add a file!";
+        if(file.isEmpty() || file.getSize() >= 2000000) {
+            String errorMsg = "No file to upload or file exceeds the maximum upload limit, please try again!";
             model.addAttribute("errorMsg", true);
             model.addAttribute("msg", errorMsg);
         } else if(fileService.getFileByName(file.getOriginalFilename()) != null) {
